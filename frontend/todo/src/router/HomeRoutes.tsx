@@ -5,24 +5,24 @@ import { Page404 } from '../components/pages/Page404';
 import { TaskManagement } from '../components/pages/TaskManagement';
 
 export const HomeRoutes = [
-	{
-		path:'/',
-		exact: true,
-		children:<Home />
-	},
-	{
-		path:'/task',
-		exact: true,
-		children:<TaskManagement />
-	},
-	{
-		path:'/calender',
-		exact: true,
-		children:<Calender />
-	},
-	{
-		path:'*',
-		exact: false,
-		children:<Page404 />
-	}
+    {
+        path: '/',
+        exact: true,
+        children: <Home />,
+    },
+    {
+        path: '/task',
+        exact: true,
+        children: <TaskManagement />,
+    },
+    {
+        path: '/calender',
+        exact: true,
+        children: <Calender />,
+    },
+    {
+        path: '*',
+        exact: false,
+        children: <Page404 />,
+    },
 ];
