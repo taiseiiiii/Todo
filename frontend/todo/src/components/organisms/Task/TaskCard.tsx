@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
 import React from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Input, Textarea } from '@chakra-ui/react';
 import { memo, useCallback, VFC } from 'react';
 
 type Props = {
-    onClick: () => void;
+    onClick?: () => void;
     title: string;
     isNewCard: boolean;
 };
@@ -18,7 +18,7 @@ export const TaskCard: VFC<Props> = memo((props) => {
         <>
             <Box
                 w="268px"
-                h="59.5px"
+                minH="59.5px"
                 bg="#fff"
                 ml={4}
                 mb={4}
@@ -26,9 +26,15 @@ export const TaskCard: VFC<Props> = memo((props) => {
                 shadow="md"
                 p={[6, 8, 2]}
                 _hover={{ cursor: 'pointer', bg: 'gray.50' }}
-                onClick={onClick}
+                onClick={isNewCard ? undefined : onClick}
+                display="table"
             >
-                <span>{title}</span>
+                {isNewCard ? (
+                    //なんでこれhだとダメでminHだと高さ指定できるんだろ。。。
+                    <Textarea minH="43.5" p={0} resize="none" overflow="hidden" variant="unstyled" />
+                ) : (
+                    <span>{title}</span>
+                )}
             </Box>
         </>
     );
