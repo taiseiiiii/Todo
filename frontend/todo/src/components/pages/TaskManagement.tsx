@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -5,7 +6,7 @@ import React from 'react';
 import { memo, useCallback, VFC } from 'react';
 import { TaskBox } from '../organisms/Task/TaskBox';
 import { HeaderLayout } from '../templates/HeaderLayout';
-import { Box, Button, Flex, IconButton, Spacer, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Spacer, Textarea, useDisclosure } from '@chakra-ui/react';
 import { TaskCard } from '../organisms/Task/TaskCard';
 import { TaskDetailModal } from '../organisms/Task/TaskDetailModal';
 import { useState } from 'react';
@@ -36,6 +37,10 @@ export const TaskManagement: VFC = memo(() => {
         const newTaskCards = taskCards.filter((target) => !target.isNewCard);
         setTaskCards(newTaskCards);
     }, []);
+
+    // const onClickAddNew = () => {
+
+    // };
     //なんかusecallbackとusestateの使い方理解したほうがいいかも
     //全く別物
     //useCallBack→関数のmemo化、子のコンポーネントに関数を渡すときにその関数をmemo化することで子の再レンダリングを防ぐ
@@ -53,13 +58,25 @@ export const TaskManagement: VFC = memo(() => {
                                 return (
                                     <TaskCard
                                         key={taskCard.taskId}
-                                        title={taskCard.title}
                                         onClick={onClickTaskCard}
                                         isNewCard={taskCard.isNewCard}
-                                        setTaskCards={setTaskCards}
+                                        content={
+                                            !taskCard.isNewCard ? (
+                                                <span>{taskCard.title}</span>
+                                            ) : (
+                                                <Textarea
+                                                    minH="43.5"
+                                                    p={0}
+                                                    resize="none"
+                                                    overflow="hidden"
+                                                    variant="unstyled"
+                                                />
+                                            )
+                                        }
                                     />
                                 );
                             })}
+
                             {!taskCards[taskCards.length - 1].isNewCard ? (
                                 <Box pl={10}>
                                     <Button h="40%" p={1} pr={20} variant="ghost" onClick={onClickAdd}>
@@ -73,11 +90,10 @@ export const TaskManagement: VFC = memo(() => {
                                         p={1}
                                         pr={20}
                                         variant="outline"
-                                        // onClick={confirmNewCard}→なんかフロント側でやるのしんどいからバックエンドにやらせよう
-
                                         colorScheme="blue"
+                                        // onClick={onClickAddNew}
                                     >
-                                        + ADD CARD
+                                        + ADD
                                     </Button>
 
                                     <IconButton

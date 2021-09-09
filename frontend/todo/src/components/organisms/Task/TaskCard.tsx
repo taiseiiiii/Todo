@@ -2,20 +2,19 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
-import React from 'react';
+import React, { Children, ReactNode } from 'react';
 import { Box, Input, Textarea } from '@chakra-ui/react';
 import { memo, useCallback, VFC } from 'react';
 import PropTypes from 'prop-types';
 
 type Props = {
     onClick?: () => void;
-    title: string;
     isNewCard: boolean;
-    setTaskCards: any;
+    content: ReactNode;
 };
 
 export const TaskCard: VFC<Props> = memo((props) => {
-    const { onClick, title, isNewCard, setTaskCards } = props;
+    const { onClick, isNewCard, content } = props;
 
     return (
         <>
@@ -32,12 +31,7 @@ export const TaskCard: VFC<Props> = memo((props) => {
                 onClick={isNewCard ? undefined : onClick}
                 display="table"
             >
-                {isNewCard ? (
-                    //なんでこれhだとダメでminHだと高さ指定できるんだろ。。。
-                    <Textarea minH="43.5" p={0} resize="none" overflow="hidden" variant="unstyled" />
-                ) : (
-                    <span>{title}</span>
-                )}
+                {content}
             </Box>
         </>
     );
