@@ -14,7 +14,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 
 export const TaskManagement: VFC = memo(() => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-
+    const [value, setValue] = React.useState('');
     //本来java側から送られてくる値TODOこの配列自体の型の指定どうしようか
     //初期表示時に値を取ってくる処理に関してはuseEffectを使う→都度調べて
     // const taskCards = [
@@ -27,6 +27,11 @@ export const TaskManagement: VFC = memo(() => {
         { taskId: 2, title: '二つ目のタスク', isNewCard: false },
     ]);
 
+    const handleInputChange = (e: any) => {
+        const inputValue = e.target.value;
+        setValue(inputValue);
+    };
+
     const onClickAdd = useCallback(() => {
         //新しく配列を作成すると無駄だと思ってpushしていたらちょっとはまった、参考：https://navyferret.com/usestate-re-render-does-not-happen/
         const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, title: '', isNewCard: true }];
@@ -38,9 +43,12 @@ export const TaskManagement: VFC = memo(() => {
         setTaskCards(newTaskCards);
     }, []);
 
-    // const onClickAddNew = () => {
-
-    // };
+    const onClickAddNew = () => {
+        const title = value;
+        taskCards.pop();
+        const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, title: title, isNewCard: false }];
+        setTaskCards(newTaskCards);
+    };
     //なんかusecallbackとusestateの使い方理解したほうがいいかも
     //全く別物
     //useCallBack→関数のmemo化、子のコンポーネントに関数を渡すときにその関数をmemo化することで子の再レンダリングを防ぐ
@@ -70,6 +78,7 @@ export const TaskManagement: VFC = memo(() => {
                                                     resize="none"
                                                     overflow="hidden"
                                                     variant="unstyled"
+                                                    onChange={handleInputChange}
                                                 />
                                             )
                                         }
@@ -91,7 +100,7 @@ export const TaskManagement: VFC = memo(() => {
                                         pr={20}
                                         variant="outline"
                                         colorScheme="blue"
-                                        // onClick={onClickAddNew}
+                                        onClick={onClickAddNew}
                                     >
                                         + ADD
                                     </Button>
