@@ -32,22 +32,24 @@ export const TaskManagement: VFC = memo(() => {
         setValue(inputValue);
     };
 
-    const onClickAdd = useCallback(() => {
+    const onClickAdd = () => {
         //新しく配列を作成すると無駄だと思ってpushしていたらちょっとはまった、参考：https://navyferret.com/usestate-re-render-does-not-happen/
         const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, title: '', isNewCard: true }];
         setTaskCards(newTaskCards);
-    }, []);
+    };
 
-    const onClickDelete = useCallback(() => {
+    const onClickDelete = () => {
         const newTaskCards = taskCards.filter((target) => !target.isNewCard);
         setTaskCards(newTaskCards);
-    }, []);
+        setValue('');
+    };
 
     const onClickAddNew = () => {
         const title = value;
         taskCards.pop();
         const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, title: title, isNewCard: false }];
         setTaskCards(newTaskCards);
+        setValue('');
     };
     //なんかusecallbackとusestateの使い方理解したほうがいいかも
     //全く別物
@@ -101,6 +103,7 @@ export const TaskManagement: VFC = memo(() => {
                                         variant="outline"
                                         colorScheme="blue"
                                         onClick={onClickAddNew}
+                                        disabled={!value ? true : undefined}
                                     >
                                         + ADD
                                     </Button>
