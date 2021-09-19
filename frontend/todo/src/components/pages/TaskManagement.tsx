@@ -11,10 +11,12 @@ import { TaskCard } from '../organisms/Task/TaskCard';
 import { TaskDetailModal } from '../organisms/Task/TaskDetailModal';
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
+import { useSelectTasks } from '../../hooks/useSelectTasks';
 
 export const TaskManagement: VFC = memo(() => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [value, setValue] = React.useState('');
+    const { onSelectedTask, selectedTask } = useSelectTasks();
     //本来java側から送られてくる値TODOこの配列自体の型の指定どうしようか
     //初期表示時に値を取ってくる処理に関してはuseEffectを使う→都度調べて
     // const taskCards = [
@@ -23,8 +25,8 @@ export const TaskManagement: VFC = memo(() => {
     // ];
 
     const [taskCards, setTaskCards] = useState([
-        { taskId: 1, title: '一つ目のタスク', isNewCard: false },
-        { taskId: 2, title: '二つ目のタスク', isNewCard: false },
+        { taskId: 1, summary: '一つ目のタスク', detail: '', isNewCard: false },
+        { taskId: 2, summary: '二つ目のタスク', detail: '', isNewCard: false },
     ]);
 
     const handleInputChange = (e: any) => {
@@ -34,7 +36,7 @@ export const TaskManagement: VFC = memo(() => {
 
     const onClickAdd = () => {
         //新しく配列を作成すると無駄だと思ってpushしていたらちょっとはまった、参考：https://navyferret.com/usestate-re-render-does-not-happen/
-        const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, title: '', isNewCard: true }];
+        const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, summary: '', detail: '', isNewCard: true }];
         setTaskCards(newTaskCards);
     };
 
@@ -45,9 +47,12 @@ export const TaskManagement: VFC = memo(() => {
     };
 
     const onClickAddNew = () => {
-        const title = value;
+        const summary = value;
         taskCards.pop();
-        const newTaskCards = [...taskCards, { taskId: taskCards.length + 1, title: title, isNewCard: false }];
+        const newTaskCards = [
+            ...taskCards,
+            { taskId: taskCards.length + 1, summary: summary, detail: '', isNewCard: false },
+        ];
         setTaskCards(newTaskCards);
         setValue('');
     };
@@ -56,7 +61,9 @@ export const TaskManagement: VFC = memo(() => {
     //useCallBack→関数のmemo化、子のコンポーネントに関数を渡すときにその関数をmemo化することで子の再レンダリングを防ぐ
     //useState→Stateの管理、これが変更されたときにコンポーネントの再レンダリングを行う
     //memo→コンポーネントをmemo化する、propsを受け取るコンポーネントに対してそのpropsが変更された場合のみ再レンダリングするようにする、コンポーネント全部に付けたほうがいいかも
-    const onClickTaskCard = useCallback(() => onOpen(), []);
+    const onClickTaskCard = (id: number) => {
+        onSelectedTask({ id, taskCards, onOpen });
+    };
 
     return (
         <>
@@ -67,15 +74,17 @@ export const TaskManagement: VFC = memo(() => {
                             {taskCards.map((taskCard) => {
                                 return (
                                     <TaskCard
+                                        id={taskCard.taskId}
                                         key={taskCard.taskId}
-                                        onClick={onClickTaskCard}
+                                        onClick={() => onClickTaskCard(taskCard.taskId)}
                                         isNewCard={taskCard.isNewCard}
                                         content={
                                             !taskCard.isNewCard ? (
-                                                <span>{taskCard.title}</span>
+                                                <span>{taskCard.summary}</span>
                                             ) : (
                                                 <Textarea
                                                     minH="43.5"
+                                                    W="252"
                                                     p={0}
                                                     resize="none"
                                                     overflow="hidden"
@@ -126,7 +135,7 @@ export const TaskManagement: VFC = memo(() => {
                     </Flex>
                 </HeaderLayout>
             </Box>
-            <TaskDetailModal isOpen={isOpen} onClose={onClose} />
+            <TaskDetailModal isOpen={isOpen} onClose={onClose} task={selectedTask} />
         </>
     );
 });

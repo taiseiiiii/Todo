@@ -15,20 +15,22 @@ import {
     Stack,
 } from '@chakra-ui/react';
 import { memo, useCallback, VFC } from 'react';
+import { Task } from '../../../types/Task';
 
 type Props = {
+    task: Task | null;
     isOpen: boolean;
     onClose: () => void;
 };
 
 export const TaskDetailModal: VFC<Props> = memo((props) => {
-    const { isOpen, onClose } = props;
+    const { task, isOpen, onClose } = props;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} autoFocus={false} motionPreset="slideInBottom">
             <ModalOverlay />
             <ModalContent pb={6}>
-                <ModalHeader>タスクのタイトルが入る</ModalHeader>
+                <ModalHeader>{task?.summary}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody mx={4}>
                     <Stack spacing={4}>

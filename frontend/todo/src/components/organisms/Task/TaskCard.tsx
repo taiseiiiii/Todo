@@ -8,13 +8,14 @@ import { memo, useCallback, VFC } from 'react';
 import PropTypes from 'prop-types';
 
 type Props = {
-    onClick?: () => void;
+    id: number;
+    onClick: (id: number) => void;
     isNewCard: boolean;
     content: ReactNode;
 };
 
 export const TaskCard: VFC<Props> = memo((props) => {
-    const { onClick, isNewCard, content } = props;
+    const { id, onClick, isNewCard, content } = props;
 
     return (
         <>
@@ -28,7 +29,7 @@ export const TaskCard: VFC<Props> = memo((props) => {
                 shadow="md"
                 p={[6, 8, 2]}
                 _hover={{ cursor: 'pointer', bg: 'gray.50' }}
-                onClick={isNewCard ? undefined : onClick}
+                onClick={isNewCard ? undefined : () => onClick(id)}
                 display="table"
             >
                 {content}
