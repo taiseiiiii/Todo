@@ -1,9 +1,11 @@
+/* eslint-disable react/no-string-refs */
 /* eslint-disable no-lone-blocks */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { memo, useCallback, VFC } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { TaskBox } from '../organisms/Task/TaskBox';
 import { HeaderLayout } from '../templates/HeaderLayout';
 import { Box, Button, Flex, IconButton, Spacer, Textarea, useDisclosure } from '@chakra-ui/react';
@@ -65,70 +67,100 @@ export const TaskManagement: VFC = memo(() => {
         onSelectedTask({ id, taskCards, onOpen });
     };
 
+    const onDragEnd = () => {
+        alert('');
+    };
+
     return (
         <>
             <Box>
                 <HeaderLayout>
                     <Flex alignItems="flex-start">
-                        <TaskBox>
-                            {taskCards.map((taskCard) => {
-                                return (
-                                    <TaskCard
-                                        id={taskCard.taskId}
-                                        key={taskCard.taskId}
-                                        onClick={() => onClickTaskCard(taskCard.taskId)}
-                                        isNewCard={taskCard.isNewCard}
-                                        content={
-                                            !taskCard.isNewCard ? (
-                                                <span>{taskCard.summary}</span>
+                        <DragDropContext onDragEnd={onDragEnd}>
+                            <Droppable droppableId="characters">
+                                {(provided) => (
+                                    <TaskBox>
+                                        <ul
+                                            className="characters"
+                                            {...provided.droppableProps}
+                                            ref={provided.innerRef}
+                                            style={{ listStyle: 'none' }}
+                                        >
+                                            {taskCards.map((taskCard) => {
+                                                return (
+                                                    <Draggable
+                                                        key={taskCard.taskId}
+                                                        draggableId={`${taskCard.taskId}`}
+                                                        index={taskCard.taskId}
+                                                    >
+                                                        {(provided) => (
+                                                            <li
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                            >
+                                                                <TaskCard
+                                                                    id={taskCard.taskId}
+                                                                    key={taskCard.taskId}
+                                                                    onClick={() => onClickTaskCard(taskCard.taskId)}
+                                                                    isNewCard={taskCard.isNewCard}
+                                                                    content={
+                                                                        !taskCard.isNewCard ? (
+                                                                            <span>{taskCard.summary}</span>
+                                                                        ) : (
+                                                                            <Textarea
+                                                                                minH="43.5"
+                                                                                W="252"
+                                                                                p={0}
+                                                                                resize="none"
+                                                                                overflow="hidden"
+                                                                                variant="unstyled"
+                                                                                onChange={handleInputChange}
+                                                                            />
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </li>
+                                                        )}
+                                                    </Draggable>
+                                                );
+                                            })}
+
+                                            {!taskCards[taskCards.length - 1].isNewCard ? (
+                                                <Box pl={10}>
+                                                    <Button h="40%" p={1} pr={20} variant="ghost" onClick={onClickAdd}>
+                                                        + ADD a CARD
+                                                    </Button>
+                                                </Box>
                                             ) : (
-                                                <Textarea
-                                                    minH="43.5"
-                                                    W="252"
-                                                    p={0}
-                                                    resize="none"
-                                                    overflow="hidden"
-                                                    variant="unstyled"
-                                                    onChange={handleInputChange}
-                                                />
-                                            )
-                                        }
-                                    />
-                                );
-                            })}
+                                                <Flex pl={10} alignItems="center">
+                                                    <Button
+                                                        h="40%"
+                                                        p={1}
+                                                        pr={20}
+                                                        variant="outline"
+                                                        colorScheme="blue"
+                                                        onClick={onClickAddNew}
+                                                        disabled={!value ? true : undefined}
+                                                    >
+                                                        + ADD
+                                                    </Button>
 
-                            {!taskCards[taskCards.length - 1].isNewCard ? (
-                                <Box pl={10}>
-                                    <Button h="40%" p={1} pr={20} variant="ghost" onClick={onClickAdd}>
-                                        + ADD a CARD
-                                    </Button>
-                                </Box>
-                            ) : (
-                                <Flex pl={10} alignItems="center">
-                                    <Button
-                                        h="40%"
-                                        p={1}
-                                        pr={20}
-                                        variant="outline"
-                                        colorScheme="blue"
-                                        onClick={onClickAddNew}
-                                        disabled={!value ? true : undefined}
-                                    >
-                                        + ADD
-                                    </Button>
-
-                                    <IconButton
-                                        variant="ghost"
-                                        colorScheme="white"
-                                        aria-label="Call Sage"
-                                        fontSize="15px"
-                                        icon={<AiOutlineClose />}
-                                        onClick={onClickDelete}
-                                    />
-                                </Flex>
-                            )}
-                        </TaskBox>
-
+                                                    <IconButton
+                                                        variant="ghost"
+                                                        colorScheme="white"
+                                                        aria-label="Call Sage"
+                                                        fontSize="15px"
+                                                        icon={<AiOutlineClose />}
+                                                        onClick={onClickDelete}
+                                                    />
+                                                </Flex>
+                                            )}
+                                        </ul>
+                                    </TaskBox>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
                         <Box ml={20}>
                             <TaskBox></TaskBox>
                         </Box>
