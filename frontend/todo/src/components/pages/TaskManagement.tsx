@@ -67,8 +67,28 @@ export const TaskManagement: VFC = memo(() => {
         onSelectedTask({ id, taskCards, onOpen });
     };
 
-    const onDragEnd = () => {
-        alert('');
+    const onDragEnd = (result: any) => {
+        const { draggableId, source, destination } = result;
+        // destination: ドロップ先 がない場合には処理を終了
+        if (!destination) {
+            return;
+        }
+
+        // ドロップ前後のIDが同じで、ドロップ前後のindexが同じ場合には処理を終了
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            return;
+        }
+
+        //現在のタスクカード一覧を取得する
+        const nowTaskCards = [...taskCards];
+        //taskCardsからドラッグした要素を削除する
+        nowTaskCards.splice(source.index, 1);
+        //taskCardsに対してドラッグした要素をドラッグした位置に挿入する
+        nowTaskCards.splice(destination.index, 0, draggableId);
+
+        //stateを更新する→並び順が保持されるはず
+        //TODO:並び順は保持されたけど値が消えている→デバッグして値が消えないように作り直すしかない
+        setTaskCards(nowTaskCards);
     };
 
     return (
@@ -77,21 +97,20 @@ export const TaskManagement: VFC = memo(() => {
                 <HeaderLayout>
                     <Flex alignItems="flex-start">
                         <DragDropContext onDragEnd={onDragEnd}>
-                            <Droppable droppableId="characters">
+                            <Droppable droppableId="TODO">
                                 {(provided) => (
                                     <TaskBox>
                                         <ul
-                                            className="characters"
                                             {...provided.droppableProps}
                                             ref={provided.innerRef}
                                             style={{ listStyle: 'none' }}
                                         >
-                                            {taskCards.map((taskCard) => {
+                                            {taskCards.map((taskCard, index) => {
                                                 return (
                                                     <Draggable
                                                         key={taskCard.taskId}
                                                         draggableId={`${taskCard.taskId}`}
-                                                        index={taskCard.taskId}
+                                                        index={index}
                                                     >
                                                         {(provided) => (
                                                             <li
@@ -125,7 +144,7 @@ export const TaskManagement: VFC = memo(() => {
                                                     </Draggable>
                                                 );
                                             })}
-
+                                            {provided.placeholder}
                                             {!taskCards[taskCards.length - 1].isNewCard ? (
                                                 <Box pl={10}>
                                                     <Button h="40%" p={1} pr={20} variant="ghost" onClick={onClickAdd}>
@@ -160,10 +179,14 @@ export const TaskManagement: VFC = memo(() => {
                                     </TaskBox>
                                 )}
                             </Droppable>
+                            {/* <Droppable droppableId="Complete">
+                                {(provided) => (
+                                    <Box ml={20}>
+                                        <TaskBox></TaskBox>
+                                    </Box>
+                                )}
+                            </Droppable> */}
                         </DragDropContext>
-                        <Box ml={20}>
-                            <TaskBox></TaskBox>
-                        </Box>
                     </Flex>
                 </HeaderLayout>
             </Box>
