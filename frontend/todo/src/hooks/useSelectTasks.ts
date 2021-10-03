@@ -3,7 +3,7 @@ import { Task } from '../types/Task';
 
 type Props = {
     id: number;
-    taskCards: Array<Task>;
+    taskCards: Task[];
     onOpen: () => void;
 };
 

@@ -3,4 +3,5 @@ export type Task = {
     summary: string;
     detail: string;
     isNewCard: boolean;
+    affiliation: string;
 };
