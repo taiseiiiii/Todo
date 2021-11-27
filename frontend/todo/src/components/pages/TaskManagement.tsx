@@ -56,9 +56,10 @@ export const TaskManagement: VFC = memo(() => {
         //新しく配列を作成すると無駄だと思ってpushしていたらちょっとはまった、参考：https://navyferret.com/usestate-re-render-does-not-happen/
         //TODO:分類は定数化したい
         const targetArray = taskCategory[affiliation];
+        const allTaskCnt = taskCategory['ToDo'].length + taskCategory['着手中'].length + taskCategory['完了'].length;
         const newTaskCards = [
             ...targetArray,
-            { taskId: targetArray.length + 1, summary: '', detail: '', isNewCard: true, affiliation: affiliation },
+            { taskId: allTaskCnt + 1, summary: '', detail: '', isNewCard: true, affiliation: affiliation },
         ];
 
         updateState(affiliation, newTaskCards);
@@ -78,7 +79,7 @@ export const TaskManagement: VFC = memo(() => {
         const newTaskCards = [
             ...targetArray,
             {
-                taskId: targetArray.length + 1,
+                taskId: taskCategory['ToDo'].length + taskCategory['着手中'].length + taskCategory['完了'].length + 1,
                 summary: summary,
                 detail: '',
                 isNewCard: false,
@@ -125,7 +126,7 @@ export const TaskManagement: VFC = memo(() => {
         //開始列と終了列が同じ場合
         if (beforeColId === afterColId) {
             //現在のタスクカード一覧を取得する
-            const nowTaskCards = [...taskCards];
+            const nowTaskCards = taskCategory[beforeColId];
             //ドロップした要素を保持する
             const droppedElement = nowTaskCards[beforeIndex];
             //taskCardsからドラッグした要素を削除する
@@ -133,7 +134,7 @@ export const TaskManagement: VFC = memo(() => {
             //taskCardsに対してドラッグした要素をドラッグした位置に挿入する
             nowTaskCards.splice(afterIndex, 0, droppedElement);
 
-            setTaskCards(nowTaskCards);
+            updateState(beforeColId, nowTaskCards);
             return;
         }
 
