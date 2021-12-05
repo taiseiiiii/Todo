@@ -161,6 +161,14 @@ export const TaskManagement: VFC = memo(() => {
         affiliation === '完了' && setDoneCards(targetArray);
     };
 
+    const updateTaskCard = (task: Task) => {
+        //モーダル側で更新された値で現在のタスクカードの内容を上書きする
+        const taskCards = taskCategory[task.affiliation];
+        taskCards.find((taskCards) => taskCards.taskId === task.taskId).summary = task.summary;
+        taskCards.find((taskCards) => taskCards.taskId === task.taskId).detail = task.detail;
+        updateState(task.affiliation, taskCards);
+    };
+
     return (
         <>
             <Box>
@@ -285,7 +293,7 @@ export const TaskManagement: VFC = memo(() => {
                     </Flex>
                 </HeaderLayout>
             </Box>
-            <TaskDetailModal isOpen={isOpen} onClose={onClose} task={selectedTask} />
+            <TaskDetailModal isOpen={isOpen} onClose={onClose} task={selectedTask} updateTaskCard={updateTaskCard} />
         </>
     );
 });
