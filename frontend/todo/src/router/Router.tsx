@@ -1,4 +1,5 @@
 /* eslint-disable react/display-name */
+import axios from 'axios';
 import React from 'react';
 import { memo, VFC } from 'react';
 import { Route, Switch } from 'react-router-dom';

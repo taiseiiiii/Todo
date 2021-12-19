@@ -15,11 +15,13 @@ import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useSelectTasks } from '../../hooks/useSelectTasks';
 import { Task } from '../../types/Task';
+import axios from 'axios';
 
 export const TaskManagement: VFC = memo(() => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [value, setValue] = React.useState('');
     const { onSelectedTask, selectedTask } = useSelectTasks();
+    const REST_API_URL = '/test';
     //本来java側から送られてくる値TODOこの配列自体の型の指定どうしようか
     //初期表示時に値を取ってくる処理に関してはuseEffectを使う→都度調べて
     // const taskCards = [
@@ -50,6 +52,10 @@ export const TaskManagement: VFC = memo(() => {
     const handleInputChange = (e: any) => {
         const inputValue = e.target.value;
         setValue(inputValue);
+    };
+
+    const getTest = () => {
+        axios.get(REST_API_URL);
     };
 
     const onClickAdd = (affiliation: string) => {
