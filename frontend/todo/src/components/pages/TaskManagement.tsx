@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import { memo, useCallback, VFC } from 'react';
+import { memo, useEffect, VFC } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { TaskBox } from '../organisms/Task/TaskBox';
 import { HeaderLayout } from '../templates/HeaderLayout';
@@ -21,7 +21,7 @@ export const TaskManagement: VFC = memo(() => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [value, setValue] = React.useState('');
     const { onSelectedTask, selectedTask } = useSelectTasks();
-    const REST_API_URL = '/test';
+    const REST_API_URL = 'http://localhost:8080/task/show';
     //本来java側から送られてくる値TODOこの配列自体の型の指定どうしようか
     //初期表示時に値を取ってくる処理に関してはuseEffectを使う→都度調べて
     // const taskCards = [
@@ -30,9 +30,13 @@ export const TaskManagement: VFC = memo(() => {
     // ];
 
     const [taskCards, setTaskCards] = useState([
-        { taskId: 1, summary: '一つ目のタスク', detail: '', isNewCard: false, affiliation: 'ToDo' },
-        { taskId: 2, summary: '二つ目のタスク', detail: '', isNewCard: false, affiliation: 'ToDo' },
+        // { taskId: 1, summary: '一つ目のタスク', detail: '', isNewCard: false, affiliation: 'ToDo' },
+        // { taskId: 2, summary: '二つ目のタスク', detail: '', isNewCard: false, affiliation: 'ToDo' },
     ]);
+
+    useEffect(() => {
+        axios.get(REST_API_URL).then((res) => setTaskCards(JSON.parse(JSON.stringify(res.data))));
+    }, []);
 
     const [inProgress, setInProgress] = useState<Task[]>([
         // { taskId: 1, summary: '一つ目のタスク', detail: '', isNewCard: false, affiliation: '着手中' },
